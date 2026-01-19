@@ -1,5 +1,9 @@
 # TeamFlow
 
+## Project Tracking
+
+- 📋 [Feature Checklist](./FEATURES_CHECKLIST.md)
+
 Internal team visibility & operations tool built with:
 
 - .NET 8
