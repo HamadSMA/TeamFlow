@@ -17,9 +17,11 @@ Each item will be marked `[x]` only when fully implemented, tested, and committe
 
 ## 2. Authentication & Authorization (ASP.NET Core Identity)
 
-- [ ] Add ASP.NET Core Identity
-- [ ] Integrate Identity with EF Core
-- [ ] Extend Identity user (ApplicationUser)
+## 2. Authentication & Authorization (ASP.NET Core Identity)
+
+- [x] Add ASP.NET Core Identity
+- [x] Integrate Identity with EF Core
+- [x] Extend Identity user (ApplicationUser)
 - [ ] Add IsActive flag (disable login)
 - [ ] Create roles: Admin, Employee
 - [ ] Seed roles on first run
