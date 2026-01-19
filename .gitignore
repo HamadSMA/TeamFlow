@@ -24,3 +24,7 @@ obj/
 
 # Publish output
 publish/
+
+# Local project handoff / chat continuity
+PROJECT_STATE.md
+
