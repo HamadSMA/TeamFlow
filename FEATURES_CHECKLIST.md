@@ -17,8 +17,6 @@ Each item will be marked `[x]` only when fully implemented, tested, and committe
 
 ## 2. Authentication & Authorization (ASP.NET Core Identity)
 
-## 2. Authentication & Authorization (ASP.NET Core Identity)
-
 - [x] Add ASP.NET Core Identity
 - [x] Integrate Identity with EF Core
 - [x] Extend Identity user (ApplicationUser)
@@ -41,8 +39,8 @@ Each item will be marked `[x]` only when fully implemented, tested, and committe
 - [ ] Create ApplicationDbContext
 - [ ] Integrate IdentityDbContext
 - [ ] Configure MySQL connection via environment variables
-- [ ] Create initial EF Core migration
-- [ ] Apply migrations to database
+- [x] Create initial EF Core migration
+- [x] Apply migrations to database
 
 ---
 
