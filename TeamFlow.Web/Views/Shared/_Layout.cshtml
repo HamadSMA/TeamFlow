@@ -26,6 +26,20 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <div class="d-flex align-items-center gap-2">
+                        @if (User?.Identity?.IsAuthenticated == true)
+                        {
+                            <span class="navbar-text">Signed in as @User.Identity.Name</span>
+                            <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="mb-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="navbar-text">Not signed in</span>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>
