@@ -1,0 +1,22 @@
+@model TeamFlow.Web.Models.Team
+
+@{
+    ViewData["Title"] = "Edit Team";
+}
+
+<h1>Edit Team</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+    <button type="submit">Save</button>
+</form>
+
+<p>
+    <a asp-action="Index">Back to list</a>
+</p>

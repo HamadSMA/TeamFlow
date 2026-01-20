@@ -56,10 +56,10 @@
 
 ## 6. Admin: Team Management
 
-- [ ] Team list page
-- [ ] Create team
-- [ ] Edit team
-- [ ] Delete team
+- [x] Team list page
+- [x] Create team
+- [x] Edit team
+- [x] Delete team
 - [ ] Prevent deleting team with members
 - [ ] Team details page with members
 
