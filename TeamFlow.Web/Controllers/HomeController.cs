@@ -27,7 +27,7 @@ public class HomeController : Controller
     [Authorize(Policy = "AdminOnly")]
     public IActionResult AdminOnly()
     {
-        return Content("Admin only.");
+        return Content("Admin OK");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

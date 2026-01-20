@@ -39,7 +39,7 @@
 ## 4. Authorization
 
 - [x] Configure authorization policies
-- [ ] Restrict Admin-only pages
+- [x] Restrict Admin-only pages
 
 ---
 
