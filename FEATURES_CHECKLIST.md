@@ -45,12 +45,12 @@
 
 ## 5. Domain Models
 
-- [ ] Team entity
-- [ ] One-to-many relationship: Team → Users
+- [x] Team entity
+- [x] One-to-many relationship: Team → Users
 - [ ] Status enum
 - [ ] Store current user status
 - [ ] StatusHistory entity
-- [ ] Configure relationships and constraints
+- [x] Configure relationships and constraints
 
 ---
 

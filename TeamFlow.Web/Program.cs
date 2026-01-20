@@ -43,6 +43,11 @@ if (!app.Environment.IsDevelopment())
 }
 
 
+if (app.Environment.IsEnvironment("DesignTime"))
+{
+    return;
+}
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -52,7 +57,6 @@ using (var scope = app.Services.CreateScope())
     await IdentityRoleSeeder.SeedRolesAsync(roleManager);
     await IdentityAdminSeeder.SeedAdminAsync(userManager);
 }
-
 
 
 app.UseHttpsRedirection();
