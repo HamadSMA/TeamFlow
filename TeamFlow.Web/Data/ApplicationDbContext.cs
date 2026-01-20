@@ -13,6 +13,7 @@ public class ApplicationDbContext
     }
 
     public DbSet<Team> Teams => Set<Team>();
+    public DbSet<StatusHistory> StatusHistories => Set<StatusHistory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,5 +29,16 @@ public class ApplicationDbContext
             .WithOne(u => u.Team)
             .HasForeignKey(u => u.TeamId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<StatusHistory>(entity =>
+        {
+            entity.Property(s => s.Timestamp).IsRequired();
+        });
+
+        modelBuilder.Entity<StatusHistory>()
+            .HasOne(s => s.User)
+            .WithMany(u => u.StatusHistoryEntries)
+            .HasForeignKey(s => s.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

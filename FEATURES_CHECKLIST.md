@@ -47,9 +47,9 @@
 
 - [x] Team entity
 - [x] One-to-many relationship: Team → Users
-- [ ] Status enum
-- [ ] Store current user status
-- [ ] StatusHistory entity
+- [x] Status enum
+- [x] Store current user status
+- [x] StatusHistory entity
 - [x] Configure relationships and constraints
 
 ---

@@ -13,4 +13,6 @@ public class ApplicationUser : IdentityUser
     public Status CurrentStatus { get; set; } = Status.Available;
     public string? StatusNote { get; set; }
     public DateTime? StatusLastUpdatedAt { get; set; }
+
+    public List<StatusHistory> StatusHistoryEntries { get; set; } = new();
 }
