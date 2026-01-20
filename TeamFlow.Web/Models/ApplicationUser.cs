@@ -9,4 +9,8 @@ public class ApplicationUser : IdentityUser
 
     public int? TeamId { get; set; }
     public Team? Team { get; set; }
+
+    public Status CurrentStatus { get; set; } = Status.Available;
+    public string? StatusNote { get; set; }
+    public DateTime? StatusLastUpdatedAt { get; set; }
 }
