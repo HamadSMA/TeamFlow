@@ -1,0 +1,32 @@
+@model TeamFlow.Web.Models.Team
+
+@{
+    ViewData["Title"] = "Team Details";
+}
+
+<h1>Team Details</h1>
+
+<dl>
+    <dt>Name</dt>
+    <dd>@Model.Name</dd>
+</dl>
+
+<h2>Members</h2>
+
+@if (Model.Users.Count == 0)
+{
+    <p>No members assigned.</p>
+}
+else
+{
+    <ul>
+@foreach (var user in Model.Users)
+{
+        <li>@user.UserName</li>
+}
+    </ul>
+}
+
+<p>
+    <a asp-action="Index">Back to list</a>
+</p>

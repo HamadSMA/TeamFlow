@@ -81,6 +81,11 @@ public class TeamsController : Controller
             return NotFound();
         }
 
+        if (await _db.Users.AnyAsync(u => u.TeamId == id))
+        {
+            ModelState.AddModelError(string.Empty, "Cannot delete a team with members.");
+        }
+
         return View(team);
     }
 
@@ -94,8 +99,28 @@ public class TeamsController : Controller
             return NotFound();
         }
 
+        if (await _db.Users.AnyAsync(u => u.TeamId == id))
+        {
+            ModelState.AddModelError(string.Empty, "Cannot delete a team with members.");
+            return View("Delete", team);
+        }
+
         _db.Teams.Remove(team);
         await _db.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var team = await _db.Teams
+            .Include(t => t.Users)
+            .FirstOrDefaultAsync(t => t.Id == id);
+
+        if (team == null)
+        {
+            return NotFound();
+        }
+
+        return View(team);
     }
 }

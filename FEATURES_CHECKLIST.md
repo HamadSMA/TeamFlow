@@ -60,8 +60,8 @@
 - [x] Create team
 - [x] Edit team
 - [x] Delete team
-- [ ] Prevent deleting team with members
-- [ ] Team details page with members
+- [x] Prevent deleting team with members
+- [x] Team details page with members
 
 ---
 
