@@ -1,0 +1,27 @@
+@model TeamFlow.Web.Models.UserTeamEditViewModel
+
+@{
+    ViewData["Title"] = "Assign Team";
+}
+
+<h1>Assign Team</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="UserId" />
+    <p><strong>User:</strong> @Model.Email</p>
+    <div>
+        <label asp-for="TeamId">Team</label>
+        <select asp-for="TeamId">
+            <option value="">Unassigned</option>
+@foreach (var team in Model.Teams)
+{
+            <option value="@team.Id">@team.Name</option>
+}
+        </select>
+    </div>
+    <button type="submit">Save</button>
+</form>
+
+<p>
+    <a asp-action="Index">Back to list</a>
+</p>

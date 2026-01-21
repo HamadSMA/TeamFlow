@@ -67,8 +67,8 @@
 
 ## 7. Admin: User Management
 
-- [ ] List users
-- [ ] Assign team
+- [x] List users
+- [x] Assign team
 - [ ] Activate / deactivate user
 
 ---

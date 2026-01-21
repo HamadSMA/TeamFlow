@@ -1,0 +1,29 @@
+@model IEnumerable<TeamFlow.Web.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h1>Users</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Team</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var user in Model)
+{
+        <tr>
+            <td>@user.Email</td>
+            <td>@(user.Team?.Name ?? "Unassigned")</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@user.Id">Assign team</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
