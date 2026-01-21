@@ -92,13 +92,13 @@
 
 ## 10. Dashboard
 
-- [ ] Role-aware dashboard
-- [ ] Admin sees all teams and users
-- [ ] Employee sees own team
-- [ ] Display user name
-- [ ] Display status
-- [ ] Display note
-- [ ] Display last updated time
+- [x] Role-aware dashboard
+- [x] Admin sees all teams and users
+- [x] Employee sees own team
+- [x] Display user name
+- [x] Display status
+- [x] Display note
+- [x] Display last updated time
 
 ---
 

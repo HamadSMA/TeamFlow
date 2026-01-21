@@ -1,0 +1,58 @@
+@model TeamFlow.Web.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var saudiTz = TimeZoneInfo.FindSystemTimeZoneById("Asia/Riyadh");
+}
+
+<h1>Dashboard</h1>
+
+@if (Model.Teams.Count == 0)
+{
+    <p>No team data available.</p>
+}
+else
+{
+@foreach (var team in Model.Teams)
+{
+    <h2>@team.Name</h2>
+
+    if (team.Users.Count == 0)
+    {
+        <p>No members.</p>
+    }
+    else
+    {
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Status</th>
+                <th>Note</th>
+                <th>Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+@foreach (var user in team.Users.OrderBy(u => u.Email))
+{
+            var displayName = user.Email ?? user.UserName ?? "Unknown";
+            DateTime? lastUpdated = user.StatusLastUpdatedAt;
+            string lastUpdatedDisplay = "Never";
+            if (lastUpdated.HasValue)
+            {
+                var utc = DateTime.SpecifyKind(lastUpdated.Value, DateTimeKind.Utc);
+                var local = TimeZoneInfo.ConvertTimeFromUtc(utc, saudiTz);
+                lastUpdatedDisplay = local.ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            <tr>
+                <td>@displayName</td>
+                <td>@user.CurrentStatus</td>
+                <td>@(string.IsNullOrWhiteSpace(user.StatusNote) ? "-" : user.StatusNote)</td>
+                <td>@lastUpdatedDisplay</td>
+            </tr>
+}
+        </tbody>
+    </table>
+    }
+}
+}

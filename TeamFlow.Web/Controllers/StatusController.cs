@@ -104,7 +104,7 @@ public class StatusController : Controller
                 ? TimeZoneInfo.ConvertTimeFromUtc(
                     DateTime.SpecifyKind(user.StatusLastUpdatedAt.Value, DateTimeKind.Utc),
                     TimeZoneInfo.FindSystemTimeZoneById("Asia/Riyadh"))
-                : null
+                : (DateTime?)null
         });
     }
 }
