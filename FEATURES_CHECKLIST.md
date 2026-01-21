@@ -69,7 +69,7 @@
 
 - [x] List users
 - [x] Assign team
-- [ ] Activate / deactivate user
+- [x] Activate / deactivate user
 
 ---
 

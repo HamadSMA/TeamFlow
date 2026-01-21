@@ -11,6 +11,7 @@
         <tr>
             <th>Email</th>
             <th>Team</th>
+            <th>Active</th>
             <th></th>
         </tr>
     </thead>
@@ -20,8 +21,15 @@
         <tr>
             <td>@user.Email</td>
             <td>@(user.Team?.Name ?? "Unassigned")</td>
+            <td>@(user.IsActive ? "Yes" : "No")</td>
             <td>
                 <a asp-action="Edit" asp-route-id="@user.Id">Assign team</a>
+                <form asp-action="ToggleActive" asp-route-id="@user.Id" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit">
+                        @(user.IsActive ? "Deactivate" : "Activate")
+                    </button>
+                </form>
             </td>
         </tr>
 }
