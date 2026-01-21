@@ -75,8 +75,8 @@
 
 ## 8. Account State Enforcement
 
-- [ ] Add IsActive flag
-- [ ] Prevent deactivated users from logging in
+- [x] Add IsActive flag
+- [x] Prevent deactivated users from logging in
 
 ---
 
