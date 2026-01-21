@@ -1,0 +1,31 @@
+@model TeamFlow.Web.Models.StatusUpdateViewModel
+
+@{
+    ViewData["Title"] = "Status Update";
+    var lastUpdated = ViewData["LastUpdated"] as DateTime?;
+}
+
+<h1>Status Update</h1>
+
+<form asp-action="Update" method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="CurrentStatus"></label>
+        <select asp-for="CurrentStatus" asp-items="Html.GetEnumSelectList<TeamFlow.Web.Models.Status>()"></select>
+        <span asp-validation-for="CurrentStatus"></span>
+    </div>
+    <div>
+        <label asp-for="StatusNote"></label>
+        <input asp-for="StatusNote" />
+        <span asp-validation-for="StatusNote"></span>
+    </div>
+    <button type="submit">Update</button>
+</form>
+
+@if (lastUpdated.HasValue)
+{
+    var utc = DateTime.SpecifyKind(lastUpdated.Value, DateTimeKind.Utc);
+    var saudiTz = TimeZoneInfo.FindSystemTimeZoneById("Asia/Riyadh");
+    var saudiTime = TimeZoneInfo.ConvertTimeFromUtc(utc, saudiTz);
+    <p>Last updated: @saudiTime.ToString("yyyy-MM-dd HH:mm:ss") (Asia/Riyadh)</p>
+}

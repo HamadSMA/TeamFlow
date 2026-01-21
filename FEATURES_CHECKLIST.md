@@ -82,11 +82,11 @@
 
 ## 9. Employee: Status Updates
 
-- [ ] Status update UI
-- [ ] Optional status note
-- [ ] Store last updated timestamp
-- [ ] Persist status updates
-- [ ] Lightweight POST / fetch endpoint
+- [x] Status update UI
+- [x] Optional status note
+- [x] Store last updated timestamp
+- [x] Persist status updates
+- [x] Lightweight POST / fetch endpoint
 
 ---
 
