@@ -4,24 +4,30 @@
     ViewData["Title"] = "Assign Team";
 }
 
-<h1>Assign Team</h1>
+<div class="page-header">
+    <div>
+        <h1>Assign Team</h1>
+        <p class="muted">Update team membership for this user.</p>
+    </div>
+</div>
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="UserId" />
-    <p><strong>User:</strong> @Model.Email</p>
-    <div>
-        <label asp-for="TeamId">Team</label>
-        <select asp-for="TeamId">
-            <option value="">Unassigned</option>
+    <div class="form-section">
+        <p><strong>User:</strong> @Model.Email</p>
+        <div class="form-group">
+            <label asp-for="TeamId">Team</label>
+            <select asp-for="TeamId" class="select">
+                <option value="">Unassigned</option>
 @foreach (var team in Model.Teams)
 {
-            <option value="@team.Id">@team.Name</option>
+                <option value="@team.Id">@team.Name</option>
 }
-        </select>
+            </select>
+        </div>
     </div>
-    <button type="submit">Save</button>
+    <div class="actions actions-right">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+    </div>
 </form>
-
-<p>
-    <a asp-action="Index">Back to list</a>
-</p>

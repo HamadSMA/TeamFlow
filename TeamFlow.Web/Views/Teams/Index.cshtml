@@ -4,30 +4,43 @@
     ViewData["Title"] = "Teams";
 }
 
-<h1>Teams</h1>
+<div class="page-header">
+    <div>
+        <h1>Teams</h1>
+        <p class="muted">Manage team roster and membership.</p>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary">Create Team</a>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create team</a>
-</p>
-
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+@if (!Model.Any())
+{
+    <div class="empty-state">No teams yet. Create your first team to group users.</div>
+}
+else
+{
+    <table class="table teams-table">
+        <thead>
+            <tr>
+                <th class="col-name">Name</th>
+                <th class="col-actions"></th>
+            </tr>
+        </thead>
+        <tbody>
 @foreach (var team in Model)
 {
-        <tr>
-            <td>@team.Name</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@team.Id">Details</a> |
-                <a asp-action="Edit" asp-route-id="@team.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@team.Id">Delete</a>
-            </td>
-        </tr>
+            <tr>
+                <td class="col-name truncate"><strong>@team.Name</strong></td>
+                <td class="col-actions">
+                    <div class="action-cell">
+                        <a asp-action="Details" asp-route-id="@team.Id" class="btn btn-secondary btn-sm">Details</a>
+                        <a asp-action="Edit" asp-route-id="@team.Id" class="btn btn-secondary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@team.Id" class="btn btn-secondary btn-sm">Delete</a>
+                    </div>
+                </td>
+            </tr>
 }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+}

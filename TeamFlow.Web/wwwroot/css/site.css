@@ -18,5 +18,108 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: 0;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f6f8;
+}
+
+.app-sidebar {
+  width: 220px;
+  background: #111827;
+  color: #fff;
+  padding: 1.5rem 1rem;
+}
+
+.app-brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.app-brand a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.app-nav a {
+  color: #cbd5f5;
+  text-decoration: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+}
+
+.app-nav a:hover {
+  background: #1f2937;
+  color: #fff;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.app-title {
+  font-weight: 600;
+}
+
+.app-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-status-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-content {
+  padding: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .app-sidebar {
+    width: 100%;
+  }
+
+  .app-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .app-status-form {
+    flex-wrap: wrap;
+  }
 }

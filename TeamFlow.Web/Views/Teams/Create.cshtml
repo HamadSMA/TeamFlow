@@ -4,18 +4,24 @@
     ViewData["Title"] = "Create Team";
 }
 
-<h1>Create Team</h1>
+<div class="page-header">
+    <div>
+        <h1>Create Team</h1>
+        <p class="muted">Add a new team to organize users.</p>
+    </div>
+</div>
 
 <form asp-action="Create" method="post">
     <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Name"></label>
-        <input asp-for="Name" />
-        <span asp-validation-for="Name"></span>
+    <div class="form-section">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="input" />
+            <span asp-validation-for="Name"></span>
+        </div>
     </div>
-    <button type="submit">Create</button>
+    <div class="actions actions-right">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+    </div>
 </form>
-
-<p>
-    <a asp-action="Index">Back to list</a>
-</p>

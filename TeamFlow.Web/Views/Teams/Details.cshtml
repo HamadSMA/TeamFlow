@@ -4,7 +4,12 @@
     ViewData["Title"] = "Team Details";
 }
 
-<h1>Team Details</h1>
+<div class="page-header">
+    <div>
+        <h1>Team Details</h1>
+        <p class="muted">View team name and assigned members.</p>
+    </div>
+</div>
 
 <dl>
     <dt>Name</dt>
@@ -15,18 +20,40 @@
 
 @if (Model.Users.Count == 0)
 {
-    <p>No members assigned.</p>
+    <div class="empty-state">No members assigned yet.</div>
 }
 else
 {
-    <ul>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-name">User</th>
+                <th class="col-meta">Email</th>
+            </tr>
+        </thead>
+        <tbody>
 @foreach (var user in Model.Users)
 {
-        <li>@user.UserName</li>
+            var displayName = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            var primaryName = string.IsNullOrWhiteSpace(displayName)
+                ? (user.Email ?? user.UserName ?? "Unknown")
+                : displayName;
+            var email = user.Email ?? user.UserName ?? string.Empty;
+            var initial = primaryName.Substring(0, 1).ToUpperInvariant();
+            <tr>
+                <td class="col-name">
+                    <div class="user-cell">
+                        <span class="avatar-sm">@initial</span>
+                        <div class="user-name truncate">@primaryName</div>
+                    </div>
+                </td>
+                <td class="muted nowrap">@email</td>
+            </tr>
 }
-    </ul>
+        </tbody>
+    </table>
 }
 
-<p>
-    <a asp-action="Index">Back to list</a>
-</p>
+<div class="actions actions-left">
+    <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+</div>

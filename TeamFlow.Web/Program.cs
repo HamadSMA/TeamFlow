@@ -26,6 +26,8 @@ builder.Services
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
+    options.LoginPath = "/Identity/Account/Auth";
+    options.AccessDeniedPath = "/Identity/Account/Auth";
     options.Events = new CookieAuthenticationEvents
     {
         OnValidatePrincipal = async context =>
@@ -53,10 +55,21 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
 });
 
+builder.Services.AddScoped<SettingsService>();
+
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AllowAnonymousToAreaPage("Identity", "/Account/Auth");
+    options.Conventions.AllowAnonymousToAreaPage("Identity", "/Account/Login");
+    options.Conventions.AllowAnonymousToAreaPage("Identity", "/Account/Register");
+    options.Conventions.AllowAnonymousToAreaPage("Identity", "/Account/Logout");
+});
 
 // --------------------
 // App
@@ -83,8 +96,10 @@ using (var scope = app.Services.CreateScope())
 
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var db = services.GetRequiredService<ApplicationDbContext>();
     await IdentityRoleSeeder.SeedRolesAsync(roleManager);
     await IdentityAdminSeeder.SeedAdminAsync(userManager);
+    await SettingsSeeder.SeedAsync(db);
 }
 
 

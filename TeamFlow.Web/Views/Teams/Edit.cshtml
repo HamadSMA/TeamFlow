@@ -4,19 +4,25 @@
     ViewData["Title"] = "Edit Team";
 }
 
-<h1>Edit Team</h1>
+<div class="page-header">
+    <div>
+        <h1>Edit Team</h1>
+        <p class="muted">Update the team name.</p>
+    </div>
+</div>
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
     <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Name"></label>
-        <input asp-for="Name" />
-        <span asp-validation-for="Name"></span>
+    <div class="form-section">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="input" />
+            <span asp-validation-for="Name"></span>
+        </div>
     </div>
-    <button type="submit">Save</button>
+    <div class="actions actions-right">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+    </div>
 </form>
-
-<p>
-    <a asp-action="Index">Back to list</a>
-</p>

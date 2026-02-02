@@ -3,29 +3,66 @@
 @{
     ViewData["Title"] = "Status Update";
     var lastUpdated = ViewData["LastUpdated"] as DateTime?;
+    var timeZoneId = ViewData["TimeZoneId"] as string ?? "UTC";
+    var options = ViewData["StatusOptions"] as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
+        ?? Html.GetEnumSelectList<TeamFlow.Web.Models.Status>().ToList();
+    var requireNote = ViewData["RequireStatusNote"] as bool? ?? false;
+    TimeZoneInfo timeZone;
+    try
+    {
+        timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+    }
+    catch
+    {
+        timeZone = TimeZoneInfo.Utc;
+    }
 }
 
-<h1>Status Update</h1>
+<div class="page-header">
+    <div>
+        <h1>Status Update</h1>
+        <p class="muted">Set your current availability and optional note.</p>
+    </div>
+</div>
 
 <form asp-action="Update" method="post">
     <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="CurrentStatus"></label>
-        <select asp-for="CurrentStatus" asp-items="Html.GetEnumSelectList<TeamFlow.Web.Models.Status>()"></select>
-        <span asp-validation-for="CurrentStatus"></span>
+    <div class="status-row">
+        <div class="form-section status-panel">
+            <div class="form-group">
+                <label asp-for="CurrentStatus">Current Status</label>
+                <select asp-for="CurrentStatus" asp-items="options" class="select"></select>
+                <span asp-validation-for="CurrentStatus"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StatusNote">Status Note</label>
+                @if (requireNote)
+                {
+                    <input asp-for="StatusNote" class="input" maxlength="50" required />
+                }
+                else
+                {
+                    <input asp-for="StatusNote" class="input" maxlength="50" />
+                }
+                <div class="form-help">
+                    <span class="muted">50 character cap.</span>
+                    <span id="status-note-count" class="char-counter">0/50</span>
+                </div>
+                <span asp-validation-for="StatusNote"></span>
+            </div>
+        </div>
     </div>
-    <div>
-        <label asp-for="StatusNote"></label>
-        <input asp-for="StatusNote" />
-        <span asp-validation-for="StatusNote"></span>
+    <div class="status-footer">
+        @if (lastUpdated.HasValue)
+        {
+            var utc = DateTime.SpecifyKind(lastUpdated.Value, DateTimeKind.Utc);
+            var localTime = TimeZoneInfo.ConvertTimeFromUtc(utc, timeZone);
+            <p class="meta">Last updated: @localTime.ToString("dd-MM-yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture) (@timeZoneId)</p>
+        }
+        <div class="actions actions-right">
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
     </div>
-    <button type="submit">Update</button>
 </form>
 
-@if (lastUpdated.HasValue)
-{
-    var utc = DateTime.SpecifyKind(lastUpdated.Value, DateTimeKind.Utc);
-    var saudiTz = TimeZoneInfo.FindSystemTimeZoneById("Asia/Riyadh");
-    var saudiTime = TimeZoneInfo.ConvertTimeFromUtc(utc, saudiTz);
-    <p>Last updated: @saudiTime.ToString("yyyy-MM-dd HH:mm:ss") (Asia/Riyadh)</p>
-}
+@* last updated moved above *@

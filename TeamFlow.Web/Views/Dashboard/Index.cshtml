@@ -2,14 +2,109 @@
 
 @{
     ViewData["Title"] = "Dashboard";
-    var saudiTz = TimeZoneInfo.FindSystemTimeZoneById("Asia/Riyadh");
+    var timeZoneId = ViewData["TimeZoneId"] as string ?? "UTC";
+    TimeZoneInfo timeZone;
+    try
+    {
+        timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+    }
+    catch
+    {
+        timeZone = TimeZoneInfo.Utc;
+    }
 }
 
-<h1>Dashboard</h1>
+<div class="page-header">
+    <div>
+        <h1>Dashboard</h1>
+        <p class="muted">Team status overview and latest updates.</p>
+    </div>
+</div>
+
+<div class="stats-shell">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div>
+                <div class="stat-value">@Model.Stats.TeamMembers</div>
+                <div class="stat-label">Team members</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div>
+                <div class="stat-value">@Model.Stats.ActiveUsers</div>
+                <div class="stat-label">Active users</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🟢</div>
+            <div>
+                <div class="stat-value">@Model.Stats.AvailableUsers</div>
+                <div class="stat-label">Available</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div>
+                <div class="stat-value">@Model.Stats.BusyUsers</div>
+                <div class="stat-label">Busy</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🌙</div>
+            <div>
+                <div class="stat-value">@Model.Stats.AwayUsers</div>
+                <div class="stat-label">Away</div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.IsAdmin)
+    {
+        <div class="stats-grid stats-admin">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div>
+                    <div class="stat-value">@Model.Stats.TotalUsers</div>
+                    <div class="stat-label">Total users</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⛔</div>
+                <div>
+                    <div class="stat-value">@Model.Stats.InactiveUsers</div>
+                    <div class="stat-label">Inactive users</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🧩</div>
+                <div>
+                    <div class="stat-value">@Model.Stats.UsersWithoutTeam</div>
+                    <div class="stat-label">Users without team</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏷️</div>
+                <div>
+                    <div class="stat-value">@Model.Stats.TotalTeams</div>
+                    <div class="stat-label">Total teams</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🕒</div>
+                <div>
+                    <div class="stat-value">@Model.Stats.StatusUpdatesLast24h</div>
+                    <div class="stat-label">Updates last 24h</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @if (Model.Teams.Count == 0)
 {
-    <p>No team data available.</p>
+    <div class="empty-state">No teams yet. Create a team to start tracking status updates.</div>
 }
 else
 {
@@ -19,36 +114,64 @@ else
 
     if (team.Users.Count == 0)
     {
-        <p>No members.</p>
+        <div class="empty-state">No members assigned to this team yet.</div>
     }
     else
     {
-    <table>
+    <table class="table dashboard-table">
         <thead>
             <tr>
-                <th>User</th>
-                <th>Status</th>
-                <th>Note</th>
-                <th>Last Updated</th>
+                <th class="col-user">User</th>
+                <th class="col-status">Status</th>
+                <th class="col-note">Note</th>
+                <th class="col-meta">Last Updated</th>
+                <th class="col-actions"></th>
             </tr>
         </thead>
         <tbody>
 @foreach (var user in team.Users.OrderBy(u => u.Email))
 {
-            var displayName = user.Email ?? user.UserName ?? "Unknown";
+            var displayName = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            var primaryName = string.IsNullOrWhiteSpace(displayName)
+                ? (user.Email ?? user.UserName ?? "Unknown")
+                : displayName;
+            var subText = string.IsNullOrWhiteSpace(displayName)
+                ? string.Empty
+                : (user.Email ?? user.UserName ?? string.Empty);
+            var initial = primaryName.Substring(0, 1).ToUpperInvariant();
             DateTime? lastUpdated = user.StatusLastUpdatedAt;
             string lastUpdatedDisplay = "Never";
             if (lastUpdated.HasValue)
             {
                 var utc = DateTime.SpecifyKind(lastUpdated.Value, DateTimeKind.Utc);
-                var local = TimeZoneInfo.ConvertTimeFromUtc(utc, saudiTz);
-                lastUpdatedDisplay = local.ToString("yyyy-MM-dd HH:mm:ss");
+                var local = TimeZoneInfo.ConvertTimeFromUtc(utc, timeZone);
+                lastUpdatedDisplay = local.ToString("dd-MM-yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture);
             }
             <tr>
-                <td>@displayName</td>
-                <td>@user.CurrentStatus</td>
-                <td>@(string.IsNullOrWhiteSpace(user.StatusNote) ? "-" : user.StatusNote)</td>
-                <td>@lastUpdatedDisplay</td>
+                <td class="col-user">
+                    <div class="user-cell">
+                        <span class="avatar-sm">@initial</span>
+                        <div>
+                            <div class="user-name truncate">@primaryName</div>
+                            @if (!string.IsNullOrWhiteSpace(subText))
+                            {
+                                <div class="user-sub muted truncate">@subText</div>
+                            }
+                        </div>
+                    </div>
+                </td>
+                <td class="col-status nowrap">@user.CurrentStatus</td>
+                @{
+                    var note = string.IsNullOrWhiteSpace(user.StatusNote) ? "-" : user.StatusNote;
+                    var noteDisplay = note.Length > 60 ? $"{note.Substring(0, 60)}…" : note;
+                }
+                <td class="col-note truncate">@noteDisplay</td>
+                <td class="col-meta nowrap">@lastUpdatedDisplay</td>
+                <td class="col-actions">
+                    <div class="action-cell">
+                        <button type="button" class="btn btn-secondary btn-sm message-btn dashboard-message-btn" data-user-id="@user.Id" data-user-name="@primaryName">Message</button>
+                    </div>
+                </td>
             </tr>
 }
         </tbody>
@@ -56,3 +179,32 @@ else
     }
 }
 }
+
+<div class="modal" id="message-modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="message-modal-title">
+        <div class="modal-header">
+            <h3 id="message-modal-title">Send Message</h3>
+            <button type="button" class="btn btn-ghost btn-sm" data-modal-close>Close</button>
+        </div>
+        <form asp-controller="Messages" asp-action="Compose" method="post" data-modal-form data-return-url="@Url.Action("Index", "Dashboard")">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="RecipientId" id="message-recipient-id" />
+            <div class="form-group">
+                <label for="message-recipient-name">To</label>
+                <input id="message-recipient-name" class="input" type="text" readonly />
+            </div>
+            <div class="form-group">
+                <label for="message-subject">Subject</label>
+                <input id="message-subject" name="Subject" class="input" type="text" maxlength="100" required />
+            </div>
+            <div class="form-group">
+                <label for="message-body">Message</label>
+                <textarea id="message-body" name="Body" class="textarea" rows="4" maxlength="500" required></textarea>
+            </div>
+            <div class="actions actions-right">
+                <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+        </form>
+    </div>
+</div>

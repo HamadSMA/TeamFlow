@@ -14,6 +14,8 @@ public class ApplicationDbContext
 
     public DbSet<Team> Teams => Set<Team>();
     public DbSet<StatusHistory> StatusHistories => Set<StatusHistory>();
+    public DbSet<AppSettings> AppSettings => Set<AppSettings>();
+    public DbSet<Message> Messages => Set<Message>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,5 +42,17 @@ public class ApplicationDbContext
             .WithMany(u => u.StatusHistoryEntries)
             .HasForeignKey(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Sender)
+            .WithMany()
+            .HasForeignKey(m => m.SenderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Recipient)
+            .WithMany()
+            .HasForeignKey(m => m.RecipientId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

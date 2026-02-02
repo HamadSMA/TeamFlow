@@ -1,0 +1,116 @@
+@model TeamFlow.Web.Models.AppSettings
+
+@{
+    ViewData["Title"] = "Settings";
+    var timeZoneOptions = new[] { "Asia/Riyadh", "UTC", "Asia/Dubai", "Europe/London", "America/New_York" };
+    var timeZoneSelect = timeZoneOptions
+        .Select(tz => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(tz, tz))
+        .ToList();
+    var defaultStatusOptions = new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
+    {
+        new("Available", TeamFlow.Web.Models.Status.Available.ToString()),
+        new("Offline", TeamFlow.Web.Models.Status.Offline.ToString())
+    };
+}
+
+<div class="page-header">
+    <div>
+        <h1>Settings</h1>
+        <p class="muted">Workspace and system configuration.</p>
+    </div>
+</div>
+
+@if (ViewData["StatusMessage"] != null)
+{
+    <div class="alert alert-success">@ViewData["StatusMessage"]</div>
+}
+else
+{
+    <div class="alert alert-success hidden"></div>
+}
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="AdminEmail" />
+    <input type="hidden" asp-for="EnableInMeeting" />
+    <input type="hidden" asp-for="RequireStatusNote" />
+    <input type="hidden" asp-for="AutoOfflineHours" />
+
+    <div class="settings-stack">
+        <section class="card">
+            <div class="card-header">
+                <h3>Organization</h3>
+                <div class="muted">Workspace identity and time settings.</div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label asp-for="OrganizationName">Organization Name</label>
+                    <input asp-for="OrganizationName" class="input" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="TimeZoneId">Time Zone</label>
+                    <select asp-for="TimeZoneId" asp-items="timeZoneSelect" class="select"></select>
+                    <div class="meta">Affects how timestamps are displayed.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <h3>Status</h3>
+                <div class="muted">Default and allowed availability states.</div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label asp-for="DefaultStatus">Default Status</label>
+                    <select asp-for="DefaultStatus" asp-items="defaultStatusOptions" class="select"></select>
+                </div>
+                <div class="form-group">
+                    <label>Allowed Statuses</label>
+                    <div class="checkbox-list">
+                        <label class="checkbox-group">
+                            <input type="checkbox" checked />
+                            <span>Available</span>
+                        </label>
+                        <label class="checkbox-group">
+                            <input type="checkbox" checked />
+                            <span>Busy</span>
+                        </label>
+                        <label class="checkbox-group">
+                            <input type="checkbox" checked />
+                            <span>Away</span>
+                        </label>
+                        <label class="checkbox-group">
+                            <input type="checkbox" checked />
+                            <span>Offline</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <h3>Security</h3>
+                <div class="muted">Access and session behavior.</div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="checkbox-group">
+                        <input asp-for="AllowSelfRegistration" type="checkbox" />
+                        <span>Allow Self Registration</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SessionTimeoutMinutes">Session Timeout (minutes)</label>
+                    <input asp-for="SessionTimeoutMinutes" class="input" type="number" min="5" />
+                    <div class="meta">Minimum 5 minutes.</div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="actions actions-right">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+</form>

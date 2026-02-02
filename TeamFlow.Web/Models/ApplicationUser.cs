@@ -4,6 +4,9 @@ namespace TeamFlow.Web.Models;
 
 public class ApplicationUser : IdentityUser
 {
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+
     // Soft-disable user (required feature)
     public bool IsActive { get; set; } = true;
 

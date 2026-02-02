@@ -87,7 +87,7 @@ namespace TeamFlow.Web.Areas.Identity.Pages.Account
             public bool RememberMe { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
@@ -102,6 +102,12 @@ namespace TeamFlow.Web.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             ReturnUrl = returnUrl;
+            var safeReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ||
+                returnUrl.Contains("/Identity/Account/Login", StringComparison.OrdinalIgnoreCase) ||
+                returnUrl.Contains("/Identity/Account/Logout", StringComparison.OrdinalIgnoreCase)
+                ? null
+                : returnUrl;
+            return RedirectToPage("./Auth", new { tab = "login", returnUrl = safeReturnUrl });
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
