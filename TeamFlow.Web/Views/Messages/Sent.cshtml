@@ -1,0 +1,59 @@
+@model IEnumerable<TeamFlow.Web.Models.Message>
+
+@{
+    ViewData["Title"] = "Sent";
+    var timeZoneId = ViewData["TimeZoneId"] as string ?? "UTC";
+    TimeZoneInfo timeZone;
+    try
+    {
+        timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+    }
+    catch
+    {
+        timeZone = TimeZoneInfo.Utc;
+    }
+}
+
+<div class="page-header">
+    <div>
+        <h1>Sent</h1>
+        <p class="muted">Messages you have sent.</p>
+    </div>
+    <div class="row-sm">
+        <a asp-action="Inbox" class="btn btn-primary">Inbox</a>
+        <a asp-action="Sent" class="btn btn-primary" aria-disabled="true" tabindex="-1">Sent</a>
+    </div>
+</div>
+
+<div class="actions actions-left section-gap mb-md">
+    <a asp-action="Compose" class="btn btn-primary">Compose</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">No sent messages yet. Compose to start a new conversation.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-name">Subject</th>
+                <th class="col-name">To</th>
+                <th class="col-meta">Sent</th>
+            </tr>
+        </thead>
+        <tbody>
+@foreach (var msg in Model)
+{
+        <tr>
+            <td class="col-name truncate">
+                <a asp-action="View" asp-route-id="@msg.Id">@msg.Subject</a>
+            </td>
+            <td class="truncate">@((msg.Recipient?.Email ?? "Unknown"))</td>
+            <td class="col-meta nowrap">@TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(msg.SentAt, DateTimeKind.Utc), timeZone).ToString("dd-MM-yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture)</td>
+        </tr>
+}
+        </tbody>
+    </table>
+}

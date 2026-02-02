@@ -4,34 +4,81 @@
     ViewData["Title"] = "Users";
 }
 
-<h1>Users</h1>
+<div class="page-header">
+    <div>
+        <h1>Users</h1>
+        <p class="muted">Manage accounts and team assignments.</p>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary">Create User</a>
+    </div>
+</div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Team</th>
-            <th>Active</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+@if (!Model.Any())
+{
+    <div class="empty-state">No users found. Create a user to get started.</div>
+}
+else
+{
+    <table class="table users-table">
+        <thead>
+            <tr>
+                <th class="col-name">User</th>
+                <th class="col-name">Team</th>
+                <th class="col-status">Active</th>
+                <th class="col-actions"></th>
+            </tr>
+        </thead>
+        <tbody>
 @foreach (var user in Model)
 {
-        <tr>
-            <td>@user.Email</td>
-            <td>@(user.Team?.Name ?? "Unassigned")</td>
-            <td>@(user.IsActive ? "Yes" : "No")</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@user.Id">Assign team</a>
-                <form asp-action="ToggleActive" asp-route-id="@user.Id" method="post" style="display:inline;">
-                    @Html.AntiForgeryToken()
-                    <button type="submit">
-                        @(user.IsActive ? "Deactivate" : "Activate")
-                    </button>
-                </form>
-            </td>
-        </tr>
+            var adminIds = ViewData["AdminIds"] as HashSet<string> ?? new HashSet<string>();
+            var isAdminUser = adminIds.Contains(user.Id);
+            var displayName = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            var primaryName = string.IsNullOrWhiteSpace(displayName)
+                ? (user.Email ?? user.UserName ?? "Unknown")
+                : displayName;
+            var subText = string.IsNullOrWhiteSpace(displayName)
+                ? string.Empty
+                : (user.Email ?? user.UserName ?? string.Empty);
+            var initial = primaryName.Substring(0, 1).ToUpperInvariant();
+            <tr>
+                <td class="col-name">
+                    <div class="user-cell">
+                        <span class="avatar-sm">@initial</span>
+                        <div>
+                            <div class="user-name truncate">@primaryName</div>
+                            @if (!string.IsNullOrWhiteSpace(subText))
+                            {
+                                <div class="user-sub muted truncate">@subText</div>
+                            }
+                        </div>
+                    </div>
+                </td>
+                <td class="col-name truncate">@((user.Team?.Name ?? "Unassigned"))</td>
+                <td class="col-status nowrap">@((user.IsActive ? "Yes" : "No"))</td>
+                <td class="col-actions">
+                    <div class="action-cell">
+                        <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-secondary btn-sm">Assign</a>
+                        <form asp-action="ToggleActive" asp-route-id="@user.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            @if (isAdminUser && user.IsActive)
+                            {
+                                <button type="submit" class="btn btn-secondary btn-sm user-toggle" disabled>
+                                    Deactivate
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn @(user.IsActive ? "btn-danger" : "btn-secondary") btn-sm user-toggle">
+                                    @(user.IsActive ? "Deactivate" : "Activate")
+                                </button>
+                            }
+                        </form>
+                    </div>
+                </td>
+            </tr>
 }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+}

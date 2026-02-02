@@ -25,6 +25,9 @@ obj/
 # Publish output
 publish/
 
+# Local databases
+teamflow.db
+**/teamflow.db
+
 # Local project handoff / chat continuity
 PROJECT_STATE.md
-

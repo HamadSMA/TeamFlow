@@ -1,0 +1,68 @@
+@model IEnumerable<TeamFlow.Web.Models.Message>
+
+@{
+    ViewData["Title"] = "Inbox";
+    var timeZoneId = ViewData["TimeZoneId"] as string ?? "UTC";
+    var latestTicks = Model.Any()
+        ? DateTime.SpecifyKind(Model.Max(m => m.SentAt), DateTimeKind.Utc).Ticks
+        : 0;
+    TimeZoneInfo timeZone;
+    try
+    {
+        timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+    }
+    catch
+    {
+        timeZone = TimeZoneInfo.Utc;
+    }
+}
+
+<div class="page-header">
+    <div>
+        <h1>Inbox</h1>
+        <p class="muted">Messages sent to you.</p>
+    </div>
+    <div class="row-sm">
+        <a asp-action="Inbox" class="btn btn-primary" aria-disabled="true" tabindex="-1">Inbox</a>
+        <a asp-action="Sent" class="btn btn-primary">Sent</a>
+    </div>
+</div>
+
+<div class="actions actions-left section-gap mb-md">
+    <a asp-action="Compose" class="btn btn-primary">Compose</a>
+</div>
+
+<div id="inbox-new-banner" class="alert alert-info" data-inbox-poll data-after="@latestTicks" style="display: none;">
+    New message received. <button type="button" class="btn btn-secondary btn-sm" onclick="location.reload()">Refresh</button>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">No messages yet. Compose a new message to get started.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-name">Subject</th>
+                <th class="col-name">From</th>
+                <th class="col-meta">Received</th>
+            </tr>
+        </thead>
+        <tbody>
+@foreach (var msg in Model)
+{
+            <tr>
+                <td class="col-name truncate">
+                    <a asp-action="View" asp-route-id="@msg.Id">
+                        @(msg.IsRead ? msg.Subject : $"* {msg.Subject}")
+                    </a>
+                </td>
+                <td class="truncate">@((msg.Sender?.Email ?? "Unknown"))</td>
+                <td class="col-meta nowrap">@TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(msg.SentAt, DateTimeKind.Utc), timeZone).ToString("dd-MM-yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture)</td>
+            </tr>
+}
+        </tbody>
+    </table>
+}

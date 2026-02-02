@@ -1,0 +1,41 @@
+@model TeamFlow.Web.Models.Message
+
+@{
+    ViewData["Title"] = "Message";
+    var timeZoneId = ViewData["TimeZoneId"] as string ?? "UTC";
+    TimeZoneInfo timeZone;
+    try
+    {
+        timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+    }
+    catch
+    {
+        timeZone = TimeZoneInfo.Utc;
+    }
+}
+
+<div class="page-header">
+    <div>
+        <h1>@Model.Subject</h1>
+        <p class="muted">Message details.</p>
+    </div>
+    <div class="row-sm">
+        <a asp-action="Compose" asp-route-recipientId="@Model.SenderId" asp-route-subject="@($"Re: {Model.Subject}")" class="btn btn-secondary">Reply</a>
+        <a asp-action="Inbox" class="btn btn-secondary">Back to Inbox</a>
+    </div>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-2">From</dt>
+    <dd class="col-sm-10">@Model.Sender?.Email</dd>
+    <dt class="col-sm-2">To</dt>
+    <dd class="col-sm-10">@Model.Recipient?.Email</dd>
+    <dt class="col-sm-2">Sent</dt>
+    <dd class="col-sm-10">@TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(Model.SentAt, DateTimeKind.Utc), timeZone).ToString("dd-MM-yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture)</dd>
+</dl>
+
+<div class="card">
+    <div class="card-body">
+        @Model.Body
+    </div>
+</div>

@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using TeamFlow.Web.Data;
 using TeamFlow.Web.Models;
 
 namespace TeamFlow.Web.Areas.Identity.Pages.Account
@@ -30,13 +31,15 @@ namespace TeamFlow.Web.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly SettingsService _settings;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            SettingsService settings)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +47,7 @@ namespace TeamFlow.Web.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _settings = settings;
         }
 
         /// <summary>
@@ -101,19 +105,40 @@ namespace TeamFlow.Web.Areas.Identity.Pages.Account
         }
 
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
+            var settings = await _settings.GetAsync();
+            if (!settings.AllowSelfRegistration)
+            {
+                ModelState.AddModelError(string.Empty, "Self-registration is disabled. Contact an administrator.");
+            }
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            var safeReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ||
+                returnUrl.Contains("/Identity/Account/Register", StringComparison.OrdinalIgnoreCase) ||
+                returnUrl.Contains("/Identity/Account/Logout", StringComparison.OrdinalIgnoreCase)
+                ? null
+                : returnUrl;
+            return RedirectToPage("./Auth", new { tab = "register", returnUrl = safeReturnUrl });
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            var settings = await _settings.GetAsync();
+            if (!settings.AllowSelfRegistration)
+            {
+                ModelState.AddModelError(string.Empty, "Self-registration is disabled. Contact an administrator.");
+                return Page();
+            }
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                user.CurrentStatus = settings.DefaultStatus;
+                user.IsActive = true;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
